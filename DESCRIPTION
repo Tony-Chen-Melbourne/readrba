@@ -1,0 +1,30 @@
+Package: readrba
+Title: Scrapes the text from RBA media releases and publications and performs sentiment analysis
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Tony",
+           family = "Chen",
+           role = c("aut", "cre"),
+           email = "tchen9912@gmail.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Scrapes the text from RBA media releases and publications and performs sentiment analysis
+License: `use_mit_license()`, `use_gpl3_license()` or friends to
+    pick a license
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    magrittr,
+    rvest,
+    stringr,
+    dplyr,
+    xml2,
+    tibble,
+    purrr,
+    lubridate,
+    pdftools,
+    tm,
+    tidytext
+Depends: 
+    R (>= 2.10)
