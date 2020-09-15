@@ -1,6 +1,7 @@
 ## code to prepare package data files
 library(readr)
 library(dplyr)
+library(stringr)
 library(tidyr)
 library(readxl)
 library(lubridate)
@@ -13,8 +14,22 @@ governor_tenure <- read_csv("data-raw/governor_tenure.csv") %>%
          end_date = end_date %>% as_date(format = "%d/%m/%Y")
          )
 
-usethis::use_data(governor_tenure, overwrite = TRUE)
+lowe_era <- governor_tenure %>%
+  filter(str_detect(governor, "Lowe")) %>%
+  .$start_date
 
+stevens_era <- governor_tenure %>%
+  filter(str_detect(governor, "Stevens")) %>%
+  .$start_date
+
+macfarlane_era <- governor_tenure %>%
+  filter(str_detect(governor, "Macfarlane")) %>%
+  .$start_date
+
+usethis::use_data(governor_tenure, overwrite = TRUE)
+usethis::use_data(lowe_era, overwrite = TRUE)
+usethis::use_data(stevens_era, overwrite = TRUE)
+usethis::use_data(macfarlane_era, overwrite = TRUE)
 
 ## Loughran McDonald sentiment data
 # Downloaded from here: https://sraf.nd.edu/textual-analysis/
