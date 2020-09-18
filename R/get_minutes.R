@@ -54,11 +54,22 @@ get_minutes <- function() {
       rvest::html_nodes("p") %>%
       rvest::html_text()
 
-    # Get the date and location
-    date <- speech_text[2] %>% stringr::str_split(" ", simplify = TRUE)
-    location <- date[,1] %>% tm::stripWhitespace()
-    date <- paste(date[,3], date[,4], date[,5])
-    date <- date %>% lubridate::as_date(format = "%d %B %Y")
+    # Get the location
+    location <- speech_text[2] %>% stringr::str_split(" ", simplify = TRUE)
+    location <- location[,1] %>% tm::stripWhitespace()
+
+    # Get the date
+    url_stub <- url %>% stringr::str_remove("https://rba.gov.au/monetary-policy/rba-board-minutes/")
+
+    date <- url_stub %>% stringr::str_sub(start = -15L, end = -6L) %>%
+      lubridate::as_date(format = "%Y-%m-%d")
+
+    if(date %>% is.na()) {
+
+      date <- url_stub %>% stringr::str_sub(start = -13L, end = -6L) %>%
+        lubridate::as_date(format = "%d%m%Y")
+
+    }
 
     # Clean text function
     speech_text <- speech_text %>%
@@ -84,7 +95,7 @@ get_minutes <- function() {
 
   }
 
-  ret <- purrr::map_dfr(url_list$value, scrape_fn)
+  ret <- lapply(url_list$value, scrape_fn) %>% bind_rows()
 
   return(ret)
 

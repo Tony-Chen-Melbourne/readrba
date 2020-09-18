@@ -84,7 +84,7 @@ get_fsr <- function() {
 
   }
 
-  ret <- purrr::map_dfr(url_list$value, scrape_fn)
+  ret <- lapply(url_list$value, scrape_fn) %>% bind_rows()
   return(ret)
 
 

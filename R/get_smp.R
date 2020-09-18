@@ -52,7 +52,7 @@ get_smp <- function() {
   }
 
   # Applying the function to get the links
-  url_list <- map_dfr(smp_page_links, smp_link_fn)
+  url_list <- sapply(smp_page_links, smp_link_fn) %>% unlist() %>% as_tibble()
 
   ### Scraping the text -----------------------------
 
@@ -73,6 +73,16 @@ get_smp <- function() {
     date <- url %>% stringr::str_sub(start = -11L, end = -5L) %>% paste0("-01")
     date <- date %>% lubridate::as_date(format = "%Y-%m-%d")
 
+    if(date %>% is.na()){
+
+      url_stub <- url %>% stringr::str_remove("https://rba.gov.au/publications/smp/")
+      year <- url_stub %>% stringr::str_sub(start = 1, end = 4)
+      month <- url_stub %>% stringr::str_sub(start = 6, end = 8)
+
+      date <- paste(year, month, "1") %>% lubridate::ymd()
+
+    }
+
     ret <- pdf_df %>%
       mutate(date = date)
 
@@ -80,7 +90,7 @@ get_smp <- function() {
 
   }
 
-  ret <- map_dfr(url_list$link, scrape_fn)
+  ret <- lapply(url_list$value, scrape_fn) %>% bind_rows()
 
   return(ret)
 
