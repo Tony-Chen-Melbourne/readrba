@@ -31,13 +31,13 @@ link_fn <- function(url) {
       dplyr::filter(stringr::str_detect(value,"speech")) %>%   # HTMLs are our only friend
       dplyr::filter(!stringr::str_detect(value,"list"))   # HTMLs are our only friend
 
-    ret <- paste0("https://www.rba.gov.au/",html$value)
+    ret <- tibble(link = paste0("https://www.rba.gov.au/",html$value))
     return(ret)
 
   }
 
 
-url_links <- lapply(main_url, link_fn) %>% unlist() %>% dplyr::as_tibble()
+url_links <- lapply(main_url, link_fn) %>% bind_rows()
 
 # Scraping the text
 
@@ -88,7 +88,7 @@ scrape_fn <- function(url) {
 
 }
 
-ret <- lapply(url_list$value, scrape_fn) %>% bind_rows()
+ret <- lapply(url_links$link, scrape_fn) %>% bind_rows()
 
 
 return(ret)
